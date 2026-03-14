@@ -33,7 +33,8 @@ export function Sidebar({ role, isMobileMenuOpen, setIsMobileMenuOpen }: Sidebar
   const { signOut, profile } = useAuth();
 
   const staffLinks = [
-    { name: 'POS', href: '/staff', icon: ShoppingCart },
+    { name: 'Dashboard', href: '/staff', icon: LayoutDashboard },
+    { name: 'POS', href: '/staff/pos', icon: ShoppingCart },
     { name: 'Inventory', href: '/staff/inventory', icon: Package },
     { name: 'Customers', href: '/staff/customers', icon: Users },
     { name: 'Prescriptions', href: '/staff/prescriptions', icon: Pill },
@@ -86,9 +87,9 @@ export function Sidebar({ role, isMobileMenuOpen, setIsMobileMenuOpen }: Sidebar
         {!collapsed ? (
           <div className="flex items-center gap-3 font-bold text-red-700 text-lg tracking-tight">
             <div className="p-2 bg-red-100 rounded-xl shadow-inner shrink-0">
-              <Pill className="h-6 w-6 text-red-600" />
+               <Pill className="h-6 w-6 text-red-600" />
             </div>
-            <span className="leading-tight">HERITAGE<br/>DRUG SHOP</span>
+            <span className="leading-tight text-sm">HERITAGE MEDICAL<br/>DRUG SHOP MALABA</span>
           </div>
         ) : (
           <div className="flex justify-center w-full text-red-700">

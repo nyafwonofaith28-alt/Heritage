@@ -41,7 +41,7 @@ export default function SettingsPage() {
                 <label className="block text-sm font-medium text-slate-700 mb-1">Pharmacy Name</label>
                 <input
                   type="text"
-                  defaultValue="HERITAGE DRUG SHOP"
+                  defaultValue="HERITAGE MEDICAL DRUG SHOP MALABA"
                   className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 bg-white/50"
                 />
               </div>

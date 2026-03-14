@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Search, Package } from 'lucide-react';
+import { Search, Package, Image as ImageIcon } from 'lucide-react';
+import Image from 'next/image';
 
 interface Product {
   id: string;
@@ -14,6 +15,7 @@ interface Product {
   expiry_date?: string;
   barcode?: string;
   requires_prescription: boolean;
+  image_url?: string;
 }
 
 export default function StaffInventory() {
@@ -66,6 +68,7 @@ export default function StaffInventory() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200 text-sm font-medium text-slate-500">
+                <th className="p-4 w-16">Image</th>
                 <th className="p-4">Name</th>
                 <th className="p-4">Category</th>
                 <th className="p-4">Price (UGX)</th>
@@ -91,6 +94,21 @@ export default function StaffInventory() {
               ) : (
                 filteredProducts.map(product => (
                   <tr key={product.id} className="hover:bg-slate-50 transition-colors">
+                    <td className="p-4">
+                      <div className="h-10 w-10 rounded-lg bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center relative">
+                        {product.image_url ? (
+                          <Image 
+                            src={product.image_url} 
+                            alt={product.name} 
+                            fill 
+                            className="object-cover"
+                            referrerPolicy="no-referrer"
+                          />
+                        ) : (
+                          <ImageIcon className="h-5 w-5 text-slate-400" />
+                        )}
+                      </div>
+                    </td>
                     <td className="p-4">
                       <div className="font-medium text-slate-900">{product.name}</div>
                       {product.barcode && <div className="text-xs text-slate-500">{product.barcode}</div>}

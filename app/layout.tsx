@@ -10,7 +10,7 @@ const jost = Jost({
 });
 
 export const metadata: Metadata = {
-  title: 'HERITAGE DRUG SHOP',
+  title: 'HERITAGE MEDICAL DRUG SHOP MALABA',
   description: 'Drug Shop Management System',
 };
 

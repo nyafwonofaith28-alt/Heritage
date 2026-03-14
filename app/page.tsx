@@ -7,13 +7,11 @@ import { useAuth } from '@/lib/auth-context';
 import { toast } from 'sonner';
 
 export default function LoginPage() {
-  const { user, profile, loading, signInWithEmail, signUpWithEmail } = useAuth();
+  const { user, profile, loading, signInWithEmail } = useAuth();
   const router = useRouter();
   
-  const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -31,14 +29,8 @@ export default function LoginPage() {
     setIsSubmitting(true);
     
     try {
-      if (isLogin) {
-        await signInWithEmail(email, password);
-        toast.success('Signed in successfully');
-      } else {
-        await signUpWithEmail(email, password, name);
-        toast.success('Account created successfully! You can now sign in.');
-        setIsLogin(true);
-      }
+      await signInWithEmail(email, password);
+      toast.success('Signed in successfully');
     } catch (error: any) {
       toast.error(error.message || 'Authentication failed');
     } finally {
@@ -67,29 +59,13 @@ export default function LoginPage() {
           <div className="p-4 bg-red-500/20 rounded-2xl mb-6 backdrop-blur-md border border-red-500/30 shadow-inner">
             <Pill className="h-10 w-10 text-red-400" />
           </div>
-          <h1 className="text-3xl font-bold text-white tracking-tight">HERITAGE DRUG SHOP</h1>
+          <h1 className="text-3xl font-bold text-white tracking-tight text-center">HERITAGE MEDICAL DRUG SHOP MALABA</h1>
           <p className="text-red-100/70 mt-3 text-center text-sm font-medium">
-            {isLogin ? 'Sign in to your account' : 'Create a new account'}
+            Sign in to your account
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {!isLogin && (
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <UserIcon className="h-5 w-5 text-white/50" />
-              </div>
-              <input
-                type="text"
-                required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="block w-full pl-10 pr-3 py-3 border border-white/20 rounded-xl leading-5 bg-white/5 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500/50 sm:text-sm transition-all"
-                placeholder="Full Name"
-              />
-            </div>
-          )}
-          
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <Mail className="h-5 w-5 text-white/50" />
@@ -127,20 +103,10 @@ export default function LoginPage() {
             {isSubmitting ? (
               <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
             ) : (
-              isLogin ? 'Sign In' : 'Create Account'
+              'Sign In'
             )}
           </button>
         </form>
-        
-        <div className="mt-6 text-center">
-          <button
-            type="button"
-            onClick={() => setIsLogin(!isLogin)}
-            className="text-sm text-red-400 hover:text-red-300 transition-colors font-medium"
-          >
-            {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
-          </button>
-        </div>
         
         <div className="mt-8 text-center">
           <p className="text-xs text-white/40">

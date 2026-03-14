@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase, supabaseUrl, supabaseAnonKey } from '@/lib/supabase';
+import { createClient } from '@supabase/supabase-js';
 import { Search, Users, Shield, ShieldAlert, Edit2, Plus, Trash2, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { format, parseISO } from 'date-fns';
@@ -26,6 +27,7 @@ export default function AdminStaff() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    password: '',
     role: 'staff' as 'staff' | 'admin',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -80,6 +82,7 @@ export default function AdminStaff() {
       setFormData({
         name: user.name,
         email: user.email,
+        password: '',
         role: user.role,
       });
     } else {
@@ -87,6 +90,7 @@ export default function AdminStaff() {
       setFormData({
         name: '',
         email: '',
+        password: '',
         role: 'staff',
       });
     }
@@ -116,13 +120,43 @@ export default function AdminStaff() {
         if (error) throw error;
         toast.success('Staff member updated successfully');
       } else {
-        // For a real app, you would use supabase.auth.admin.createUser here
-        // Since we don't have admin auth access, we'll insert directly to users table
-        // Note: They will still need to sign up with this email to actually log in
-        const { error } = await supabase
+        // Create a temporary client to avoid logging out the current admin user
+        const tempSupabase = createClient(supabaseUrl, supabaseAnonKey, {
+          auth: {
+            persistSession: false,
+            autoRefreshToken: false,
+          }
+        });
+
+        const { data: authData, error: authError } = await tempSupabase.auth.signUp({
+          email: formData.email,
+          password: formData.password,
+          options: {
+            data: {
+              name: formData.name,
+              role: formData.role,
+            }
+          }
+        });
+
+        if (authError) {
+          console.error("Auth Error:", authError);
+          throw new Error(authError.message || 'Authentication failed');
+        }
+        if (!authData.user) {
+          throw new Error('Failed to create user account: No user returned');
+        }
+        
+        // If prevent email enumeration is on, Supabase returns a fake user with no identities
+        // when the email is already registered.
+        if (authData.user.identities && authData.user.identities.length === 0) {
+          throw new Error('Email address is already registered');
+        }
+
+        const { error: dbError } = await supabase
           .from('users')
           .insert([{
-            id: crypto.randomUUID(),
+            id: authData.user.id,
             name: formData.name,
             email: formData.email,
             role: formData.role,
@@ -130,15 +164,18 @@ export default function AdminStaff() {
             created_at: new Date().toISOString()
           }]);
           
-        if (error) throw error;
-        toast.success('Staff member added successfully. Note: They must sign up with this email to log in.');
+        if (dbError) {
+          console.error("DB Error:", dbError);
+          throw new Error(dbError.message || 'Database insertion failed');
+        }
+        toast.success('Staff member added successfully.');
       }
       
       closeModal();
       fetchStaff();
-    } catch (error) {
-      console.error('Error saving staff:', error);
-      toast.error('Failed to save staff member');
+    } catch (error: any) {
+      console.error('Error saving staff:', error?.message || error);
+      toast.error(error?.message || 'Failed to save staff member');
     } finally {
       setIsSubmitting(false);
     }
@@ -305,6 +342,23 @@ export default function AdminStaff() {
                   placeholder="e.g. jane@heritage.com"
                 />
               </div>
+
+              {!editingUser && (
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    required={!editingUser}
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    className="w-full px-4 py-2 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
+                    placeholder="Assign a temporary password"
+                    minLength={6}
+                  />
+                </div>
+              )}
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">

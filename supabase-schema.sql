@@ -20,6 +20,7 @@ CREATE TABLE products (
   expiry_date DATE,
   barcode TEXT,
   requires_prescription BOOLEAN DEFAULT FALSE,
+  image_url TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -65,5 +66,15 @@ CREATE TABLE prescriptions (
   notes TEXT,
   status TEXT DEFAULT 'pending',
   image_url TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Stock Movements table
+CREATE TABLE stock_movements (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  product_id UUID REFERENCES products(id) ON DELETE CASCADE,
+  quantity_change INTEGER NOT NULL,
+  type TEXT NOT NULL, -- 'initial', 'adjustment', 'sale', 'restock'
+  reason TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

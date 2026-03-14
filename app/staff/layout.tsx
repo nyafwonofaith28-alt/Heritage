@@ -51,7 +51,7 @@ export default function StaffLayout({ children }: { children: React.ReactNode })
             <div className="hidden md:block p-2 bg-white/10 rounded-lg backdrop-blur-sm border border-white/20">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/></svg>
             </div>
-            <h1 className="text-lg md:text-2xl font-bold tracking-widest uppercase truncate">HERITAGE DRUG SHOP</h1>
+            <h1 className="text-lg md:text-2xl font-bold tracking-widest uppercase truncate">HERITAGE MEDICAL DRUG SHOP MALABA</h1>
           </div>
           <div className="flex items-center gap-2 md:gap-4">
             <div className="text-xs md:text-sm text-red-100 font-medium bg-red-950/50 px-2 md:px-3 py-1 md:py-1.5 rounded-full border border-red-800/50 whitespace-nowrap">
